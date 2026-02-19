@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Add Exercise Entry</h3>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label>Exercise Name</label>
+        <input type="text" name="exercise_name" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Duration (minutes)</label>
+        <input type="number" name="duration" class="form-control" required>
+    </div>
+
+    <button class="btn btn-warning">Submit</button>
+
+</form>
+
+{% endblock %}

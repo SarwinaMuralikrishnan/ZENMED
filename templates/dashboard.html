@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Welcome, {{ name }} 👋</h2>
+
+<hr>
+
+<!-- ================= DASHBOARD STATS ================= -->
+
+<div class="row text-center mb-4">
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Glucose Entries</h5>
+            <p>Track your sugar levels daily</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Diet Logs</h5>
+            <p>Maintain healthy meals</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Exercise Logs</h5>
+            <p>Stay active & consistent</p>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- ================= MEAL BUTTONS ================= -->
+
+<h4>🍽 Meal Plans</h4>
+
+<div class="mb-3">
+    <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#breakfast">Breakfast</button>
+    <button class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#lunch">Lunch</button>
+    <button class="btn btn-warning" data-bs-toggle="collapse" data-bs-target="#dinner">Dinner</button>
+</div>
+
+<!-- ================= BREAKFAST SECTION ================= -->
+
+<div id="breakfast" class="collapse">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="https://www.indianveggiedelight.com/wp-content/uploads/2024/01/vegetable-oats-upma.jpg" class="card-img-top">
+                <div class="card-body text-center">Vegetable Oats Upma</div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="https://1.bp.blogspot.com/-2PLXp1kogPM/TdqYN617MhI/AAAAAAAAMGk/vUC4OGirsEU/s1600/Ragi+Idli+%25286%2529-1.jpg" class="card-img-top">
+                <div class="card-body text-center">Ragi Idli</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= LUNCH SECTION ================= -->
+
+<div id="lunch" class="collapse">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="https://i.ytimg.com/vi/95Z7nP0yhdU/maxresdefault.jpg" class="card-img-top">
+                <div class="card-body text-center">Balanced Veg Thali</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= DINNER SECTION ================= -->
+
+<div id="dinner" class="collapse">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="https://www.saffrontrail.com/wp-content/uploads/2016/01/chakkara-pongal-with-brown-rice-recipe.1024x1024.jpg" class="card-img-top">
+                <div class="card-body text-center">Brown Rice Pongal</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<a href="{{ url_for('add_glucose') }}" class="btn btn-primary">Add Glucose</a>
+<a href="{{ url_for('add_diet') }}" class="btn btn-success">Add Diet</a>
+<a href="{{ url_for('add_exercise') }}" class="btn btn-warning">Add Exercise</a>
+<a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+
+{% endblock %}

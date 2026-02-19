@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Add Glucose Entry</h3>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label>Fasting Level</label>
+        <input type="number" name="fasting" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Post Meal Level</label>
+        <input type="number" name="post_meal" class="form-control" required>
+    </div>
+
+    <button class="btn btn-primary">Submit</button>
+
+</form>
+
+{% endblock %}
