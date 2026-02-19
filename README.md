@@ -1,41 +1,37 @@
-# ZenMed
-AI-powered Diabetes Management &amp; Rehabilitation Assistant providing posture correction, guided exercises, personalized nutrition plans, and glucose tracking.
-# AI-Driven Diabetes Management & Rehabilitation Assistant
+# ZenMed - AI-Powered Diabetes Assistant
 
-## Team Name
-ZenMed
+## Overview
+ZenMed is a comprehensive web application designed to help diabetic patients manage their condition through AI-driven insights, localized nutrition plans, and real-time posture correction.
 
-## Team Members
-- Subetha T  
-- Sruthi S  
-- Sarwina M  
+## Features
+- **AI Posture Correction**: Real-time webcam analysis using MediaPipe to ensure correct exercise form.
+- **Localized Nutrition**: Generates diet plans tailored to Tamil Nadu/Indian cuisine based on preferences.
+- **Glucose Tracking**: Log fasting and post-meal levels with visual charts.
+- **Doctor Portal**: ALerts and patient management for healthcare providers.
+- **Reminders**: Set alerts for medication, water, and exercise.
 
-## Problem Statement
-The number of people living with Diabetes Mellitus is increasing across all age groups. Many patients struggle to manage their condition at home due to lack of guidance on correct exercise posture, personalized diet plans, and regular monitoring.
+## Tech Stack
+- **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
+- **Backend**: Python (Flask)
+- **Database**: SQLite
+- **AI/ML**: MediaPipe (JS), Chart.js (Visualization)
 
-Improper exercise techniques and poor nutrition tracking may lead to complications and reduced quality of life.
+## Installation
+1. Install dependencies:
+   ```bash
+   pip install flask werkzeug
+   ```
+2. Run the application:
+   ```bash
+   python app.py
+   ```
+3. Open browser at `http://127.0.0.1:5000`
 
-## Solution
-Our system provides an AI-powered assistant that helps diabetic patients manage their health through posture correction, guided exercise, localized diet plans, and glucose tracking.
+## Project Structure
+- `app.py`: Main application logic.
+- `templates/`: HTML files.
+- `static/`: CSS and assets.
+- `database.db`: SQLite database (auto-created).
 
-## Key Features
-- Real-Time AI Posture Correction
-- Guided Exercise Programs
-- Smart Activity Reminders
-- Personalized Localized Nutrition Plans
-- Glucose & Progress Tracking
-- Recovery Analytics Dashboard
-- Multi-Lingual Support
-- Caregiver / Doctor Alert System
-
-## Technologies Used
-- Frontend: HTML, CSS, JavaScript
-- Backend: Python (Flask)
-- Database: SQLite
-- AI Modules: OpenCV, MediaPipe, Machine Learning Models
-
-## Future Enhancements
-- Mobile App Integration
-- Wearable Device Sync
-- Predictive Glucose Risk Alerts
-- Cloud Deployment
+## Accounts (Demo)
+- Register a new account as "Patient" or "Doctor" to see different views.

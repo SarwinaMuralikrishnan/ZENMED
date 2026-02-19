@@ -1,22 +1,33 @@
 {% extends "base.html" %}
+
 {% block content %}
-
-<h3>Add Glucose Entry</h3>
-
-<form method="POST">
-
-    <div class="mb-3">
-        <label>Fasting Level</label>
-        <input type="number" name="fasting" class="form-control" required>
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <h2 class="mb-4">Log Glucose Reading</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('glucose_tracker') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" required value="{{ current_date }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fasting Level (mg/dL)</label>
+                        <input type="number" class="form-control" name="fasting" placeholder="e.g. 95">
+                        <div class="form-text">Normal Range: 70-100 mg/dL</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Post-Meal Level (mg/dL)</label>
+                        <input type="number" class="form-control" name="post_meal" placeholder="e.g. 140">
+                        <div class="form-text">Normal Range: < 140 mg/dL (2 hours after meal)</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Log</button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Post Meal Level</label>
-        <input type="number" name="post_meal" class="form-control" required>
-    </div>
-
-    <button class="btn btn-primary">Submit</button>
-
-</form>
-
+</div>
 {% endblock %}
