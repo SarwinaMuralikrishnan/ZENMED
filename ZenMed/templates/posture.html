@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="row mb-4 text-center">
+        <h2 class="fw-bold">AI Posture Correction</h2>
+        <p class="text-muted">
+            Real-time analysis using computer vision.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-0 position-relative">
+
+                    <!-- Loader -->
+                    <div id="loading"
+                        class="d-flex justify-content-center align-items-center position-absolute w-100 h-100 bg-white"
+                        style="z-index: 10;">
+                        <div class="spinner-border text-primary"></div>
+                        <span class="ms-3">Loading AI Models... Please wait.</span>
+                    </div>
+
+                    <!-- Hidden Video (needed for MediaPipe) -->
+                    <video class="input_video" id="debug-video" autoplay playsinline muted style="display:none;"></video>
+
+                    <!-- Canvas -->
+                    <canvas class="output_canvas"
+                        style="width:100%; border-radius:12px;"></canvas>
+
+                    <!-- Overlay -->
+                    <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-dark bg-opacity-50 text-white text-center rounded-bottom">
+                        <h4 id="status-text">Waiting for Pose...</h4>
+                        <div class="fs-5">
+                            Reps: <span id="rep-count">0</span> |
+                            Score: <span id="score-val">100</span>%
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-center">
+                    <button class="btn btn-danger btn-lg w-100" onclick="endSession()">
+                        End Session & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MediaPipe Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Posture page loaded");
+
+    const videoElement = document.querySelector('.input_video');
+    const canvasElement = document.querySelector('.output_canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+
+    const loadingDiv = document.getElementById('loading');
+    const repCountSpan = document.getElementById('rep-count');
+    const statusText = document.getElementById('status-text');
+
+    let reps = 0;
+    let stage = "UP";
+
+    function findAngle(a, b, c) {
+        const radians =
+            Math.atan2(c.y - b.y, c.x - b.x) -
+            Math.atan2(a.y - b.y, a.x - b.x);
+        let angle = Math.abs(radians * 180.0 / Math.PI);
+        if (angle > 180) angle = 360 - angle;
+        return angle;
+    }
+
+    function onResults(results) {
+
+        loadingDiv.style.display = "none";
+
+        const width = results.image.width;
+        const height = results.image.height;
+
+        canvasElement.width = width;
+        canvasElement.height = height;
+
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, width, height);
+        canvasCtx.drawImage(results.image, 0, 0, width, height);
+
+        if (results.poseLandmarks) {
+
+            drawConnectors(
+                canvasCtx,
+                results.poseLandmarks,
+                POSE_CONNECTIONS,
+                { color: '#00FF00', lineWidth: 4 }
+            );
+
+            drawLandmarks(
+                canvasCtx,
+                results.poseLandmarks,
+                { color: '#FF0000', lineWidth: 2 }
+            );
+
+            const hip = results.poseLandmarks[23];
+            const knee = results.poseLandmarks[25];
+            const ankle = results.poseLandmarks[27];
+
+            if (hip && knee && ankle) {
+
+                const angle = findAngle(hip, knee, ankle);
+
+                if (angle > 160) {
+                    stage = "UP";
+                    statusText.innerText = "Stand Straight";
+                }
+
+                if (angle < 90 && stage === "UP") {
+                    stage = "DOWN";
+                    reps++;
+                    repCountSpan.innerText = reps;
+                    statusText.innerText = "Good Squat!";
+                }
+            }
+        }
+
+        canvasCtx.restore();
+    }
+
+    const pose = new Pose({
+        locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+    });
+
+    pose.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    });
+
+    pose.onResults(onResults);
+
+// startCamera tries each video input in turn and can recover when the device is busy
+    async function startCamera(deviceIndex = 0, busyAttempt = 0) {
+        try {
+            if (deviceIndex === 0 && busyAttempt === 0) {
+                console.log("Checking camera permission state...");
+                if (navigator.permissions) {
+                    const status = await navigator.permissions.query({ name: 'camera' });
+                    console.log('Camera permission status:', status.state);
+                }
+            }
+
+            console.log(`Starting camera (device ${deviceIndex + 1}, busy try ${busyAttempt + 1})`);
+
+            if (!window._videoDevices) {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                window._videoDevices = devices.filter(d => d.kind === 'videoinput');
+                console.log('videoDevices', window._videoDevices);
+            }
+
+            let constraints = { video: true };
+            if (window._videoDevices.length > deviceIndex) {
+                constraints = { video: { deviceId: { exact: window._videoDevices[deviceIndex].deviceId } } };
+            }
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            videoElement.srcObject = stream;
+            // unhide debug element so user can see camera working
+            document.getElementById('debug-video').style.display = 'block';
+            document.getElementById('debug-video').width = 320;
+            document.getElementById('debug-video').height = 240;
+            await videoElement.play();
+
+            try {
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await pose.send({ image: videoElement });
+                    },
+                    width: 800,
+                    height: 480
+                });
+                await camera.start();
+            } catch (e) {
+                console.warn('MediaPipe Camera.start() failed, using manual loop', e);
+                async function processFrame() {
+                    await pose.send({ image: videoElement });
+                    requestAnimationFrame(processFrame);
+                }
+                processFrame();
+            }
+
+            console.log("Camera started successfully");
+
+        } catch (err) {
+            console.error("Camera error:", err);
+            navigator.mediaDevices.enumerateDevices()
+                .then(devs => console.log('enumerated devices:', devs))
+                .catch(e => console.warn('enumeration failed', e));
+
+            if ((err.name === 'NotReadableError' || err.name === 'TrackStartError') && busyAttempt < 3) {
+                console.log("Device busy, retrying same device");
+                setTimeout(() => startCamera(deviceIndex, busyAttempt + 1), 500);
+                return;
+            }
+
+            if (window._videoDevices && deviceIndex + 1 < window._videoDevices.length) {
+                console.log('Trying next video device');
+                startCamera(deviceIndex + 1, 0);
+                return;
+            }
+
+            let msg = "❌ Could not start camera.";
+            if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                msg += " It looks like another application is using the camera or the device is busy.";
+            } else if (err.name === 'PermissionDeniedError' || err.name === 'NotAllowedError') {
+                msg += " Permission was denied; please allow camera access in the browser settings.";
+            } else if (err.name === 'OverconstrainedError') {
+                msg += ` Constraint not satisfied: ${err.constraint}`;
+            }
+            msg += "<br/>Close other camera apps or tabs, then retry.";
+
+            loadingDiv.innerHTML = `
+                ${msg}<br/>
+                <button id="retry-camera" class="btn btn-sm btn-primary mt-2">Retry</button>
+            `;
+            document.getElementById('retry-camera')?.addEventListener('click', () => {
+                loadingDiv.innerHTML = `<div class="spinner-border text-primary"></div>
+                    <span class="ms-3">Loading AI Models... Please wait.</span>`;
+                setTimeout(() => startCamera(0, 0), 500);
+            });
+        }
+    }
+
+    window.endSession = function () {
+
+        fetch('/analyze_posture_batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                scores: [],
+                exercise: "Squats",
+                reps: reps
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = "{{ url_for('dashboard') }}";
+            }
+        });
+    };
+
+    startCamera();
+
+});
+</script>
+
+{% endblock %}

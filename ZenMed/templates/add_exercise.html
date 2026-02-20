@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Exercise Programs & Logging</h2>
+
+<ul class="nav nav-tabs mb-4" id="exTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="programs-tab" data-bs-toggle="tab" data-bs-target="#programs" type="button"
+            role="tab" aria-selected="true">Guided Programs</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="log-tab" data-bs-toggle="tab" data-bs-target="#log" type="button" role="tab"
+            aria-selected="false">Log Activity</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="exTabContent">
+    <div class="tab-pane fade show active" id="programs" role="tabpanel" aria-labelledby="programs-tab">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100 shadow-sm border-success">
+                    <div class="card-header bg-success text-white">Beginner (15 Mins)</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Morning Stretch</h5>
+                        <p class="card-text">Gentle yoga and stretching to improve blood flow.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> Neck Rolls</li>
+                            <li><i class="fas fa-check text-success"></i> Shoulder Shrugs</li>
+                            <li><i class="fas fa-check text-success"></i> Seated Twist</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-success w-100">Start Program</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white">Intermediate (30 Mins)</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Cardio Walk</h5>
+                        <p class="card-text">Brisk walking with interval training.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-primary"></i> 5 min Warmup</li>
+                            <li><i class="fas fa-check text-primary"></i> 20 min Brisk Walk</li>
+                            <li><i class="fas fa-check text-primary"></i> 5 min Cool Down</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-primary w-100">Start Program</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-warning">
+                    <div class="card-header bg-warning text-dark">Advanced (45 Mins)</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Strength Training</h5>
+                        <p class="card-text">Bodyweight exercises for muscle building.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-warning"></i> Squats (3 sets)</li>
+                            <li><i class="fas fa-check text-warning"></i> Pushups (3 sets)</li>
+                            <li><i class="fas fa-check text-warning"></i> Lunges (3 sets)</li>
+                        </ul>
+                        <a href="{{ url_for('posture_ai') }}" class="btn btn-outline-warning w-100 text-dark">Use AI
+                            Correction</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="log" role="tabpanel" aria-labelledby="log-tab">
+        <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Log Custom Activity</h4>
+                <form method="POST" action="{{ url_for('add_exercise') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Activity Name</label>
+                        <input type="text" class="form-control" name="exercise_name" placeholder="e.g. Cycling"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Duration (Minutes)</label>
+                        <input type="number" class="form-control" name="duration" placeholder="e.g. 30" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

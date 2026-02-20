@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-4">Localized Nutrition Plan Generator</h2>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                Input Preferences
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('nutrition') }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Location (e.g., Chennai, Madurai)</label>
+                            <input type="text" class="form-control" name="location" placeholder="City" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Food Preference</label>
+                            <select class="form-select" name="preference">
+                                <option value="Veg">Vegetarian</option>
+                                <option value="Non-Veg">Non-Vegetarian</option>
+                                <option value="Vegan">Vegan</option>
+                            </select>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-success px-4">Generate Plan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if plan %}
+        <div class="card shadow border-success">
+            <div class="card-header bg-light">
+                <h5 class="mb-0 text-success"><i class="fas fa-leaf me-2"></i> Your Personalized Plan (Tamil Nadu Style)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Meal Type</th>
+                                <th>Recommendation</th>
+                                <th>Nutritional Info (Approx)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Breakfast</td>
+                                <td>{{ plan.breakfast }}</td>
+                                <td><span class="badge bg-info">~300 kcal</span> <span class="badge bg-secondary">Low
+                                        GI</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Lunch</td>
+                                <td>{{ plan.lunch }}</td>
+                                <td><span class="badge bg-warning text-dark">~450 kcal</span> <span
+                                        class="badge bg-secondary">Med GI</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Snacks</td>
+                                <td>{{ plan.snacks }}</td>
+                                <td><span class="badge bg-success">~150 kcal</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Dinner</td>
+                                <td>{{ plan.dinner }}</td>
+                                <td><span class="badge bg-info">~350 kcal</span> <span class="badge bg-secondary">Low
+                                        GI</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <strong>Note:</strong> Limit rice portion to 1 cup. Increase vegetable intake (Poriyal/Kootu). avoid
+                    excessive oil.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
